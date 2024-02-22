@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_research/modules/auth/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,8 +16,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        scaffoldBackgroundColor: Colors.white
       ),
-      home: Container(),
+      home: LoginScreen(),
     );
   }
 }
