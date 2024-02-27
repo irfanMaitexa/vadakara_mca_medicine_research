@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medicine_research/modules/auth/user_registrattion_screen.dart';
+import 'package:medicine_research/modules/user/user_root_screen.dart';
 import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/utils/validator.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
@@ -136,13 +137,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _loginHandler() {
-    setState(() {
-      emailError = validateEmail(_emailController.text);
-      passwordError = validatePassword(_passwordController.text);
-      if (emailError == null && passwordError == null) {
-      } else {
-        setState(() {});
-      }
-    });
+    // setState(() {
+    //   emailError = validateEmail(_emailController.text);
+    //   passwordError = validatePassword(_passwordController.text);
+    //   if (emailError == null && passwordError == null) {
+    //   } else {
+    //     setState(() {});
+    //   }
+    // });
+
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const UserRootScreen()), (route) => false);
   }
 }
