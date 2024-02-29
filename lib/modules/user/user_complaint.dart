@@ -14,17 +14,17 @@ class UserComplaintScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               'Add your complaint',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             CustomTextField(
