@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_research/modules/user/user_complaint.dart';
+import 'package:medicine_research/modules/user/user_medicine_screen.dart';
 import 'package:medicine_research/modules/user/user_view_stock_screen.dart';
+import 'package:medicine_research/modules/user/user_view_oreder_screen.dart';
 import 'package:medicine_research/modules/user/widgets/card_widget.dart';
 import 'package:medicine_research/utils/constants.dart';
-
 
 class UserRootScreen extends StatefulWidget {
   const UserRootScreen({super.key});
@@ -31,40 +33,51 @@ class _UserRootScreenState extends State<UserRootScreen> {
             iconData: Icons.inventory,
             title: 'View Stock',
             onTap: () {
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>const UserViewStockSceeen(),));
-            
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UserViewStockSceeen(),
+                  ));
             },
           ),
           CardWidget(
             iconData: Icons.vaccines,
             title: 'Medicine Details',
             onTap: () {
-            
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const UserMedicineScreen();
+              }));
             },
           ),
           CardWidget(
             iconData: Icons.book,
             title: 'View Order',
             onTap: () {
-             
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UserViewOrderScreen(),
+                ),
+              );
             },
           ),
           CardWidget(
             iconData: Icons.medication,
             title: 'View physician',
-            onTap: () {
-              
-            },
+            onTap: () {},
           ),
           CardWidget(
             iconData: Icons.add,
             title: 'Add Complaint',
             onTap: () {
-              
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  UserComplaintScreen(),
+                ),
+              );
             },
           ),
-          
         ]),
       ),
     );

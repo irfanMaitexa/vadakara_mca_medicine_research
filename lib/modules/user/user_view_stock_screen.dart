@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_research/modules/user/user_add_order_screen.dart';
 import 'package:medicine_research/utils/constants.dart';
+import 'package:medicine_research/widgets/custom_button.dart';
 
 class UserViewStockSceeen extends StatefulWidget {
   const UserViewStockSceeen({super.key});
@@ -25,7 +27,7 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             height: 55,
             child: TextField(
               enabled: true,
@@ -41,64 +43,96 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
               ),
             ),
           ),
-
-          SizedBox(height: 30,),
+          const SizedBox(
+            height: 30,
+          ),
           Expanded(
-              child: ListView.builder(
-            itemCount: _medicineList.length,
-            itemBuilder: (context, index) => Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration:
-                  BoxDecoration(border: Border.all(color: KButtonColor)),
-              child: Row(
-                textBaseline: TextBaseline.alphabetic,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius:
-                          BorderRadius.horizontal(right: Radius.circular(20)),
-                      child: Image(
-                        fit: BoxFit.fitHeight,
-                        image: NetworkImage(_medicineList[index]),
-                      ),
+            child: ListView.builder(
+              itemCount: _medicineList.length,
+              itemBuilder: (context, index) => Container(
+                height: 150,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration:
+                    BoxDecoration(border: Border.all(color: KButtonColor)),
+                child: Stack(
+                  children: [
+                    Row(
+                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 150,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.horizontal(
+                                  right: Radius.circular(20)),
+                              child: Image(
+                                fit: BoxFit.fitHeight,
+                                image: NetworkImage(_medicineList[index]),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+
+                              SizedBox(height: 10,),
+
+                              Text(
+                                'Medicine 1',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                'Unit:1 doz',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                '100',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Medicine 1',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>  UserAddOrderScreen(imageUrl: _medicineList[index],),
+                              ));
+                        },
+                        child: Text(
+                          'Order Now >',
+                          style: TextStyle(color: KButtonColor, fontSize: 16),
+                        ),
                       ),
-                      Text(
-                        'Unit:1 doz',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        'prize',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ))
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ))
+          )
         ],
       ),
     );
