@@ -46,12 +46,12 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
             width: 200,
             child: CustomButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserRootScreen(),
-                  ),
-                );
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserRootScreen(),
+                    ),
+                    (route) => false);
               },
               text: 'Home',
               color: Colors.white,
