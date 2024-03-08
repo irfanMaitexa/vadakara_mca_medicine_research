@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_research/modules/auth/login.dart';
 import 'package:medicine_research/modules/staff/add_medicine_stock_screen.dart';
-import 'package:medicine_research/modules/staff/manage_medicine_screen.dart';
-import 'package:medicine_research/modules/staff/staff_view_order_screen.dart';
+import 'package:medicine_research/modules/staff/staff_medicine_view.dart';
+import 'package:medicine_research/modules/staff/staff_stock_manage_medicine_screen.dart';
+import 'package:medicine_research/modules/staff/staff_order_view_screen.dart';
+import 'package:medicine_research/modules/staff/staff_stock_root_screen.dart';
 import 'package:medicine_research/modules/user/widgets/card_widget.dart';
 import 'package:medicine_research/utils/constants.dart';
 
@@ -16,6 +18,7 @@ class StaffRootScreen extends StatefulWidget {
 }
 
 class _StaffRootScreenState extends State<StaffRootScreen> {
+  bool _loading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,8 +71,8 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
             flex: 2,
             child: Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: KButtonColor),
@@ -86,7 +89,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddMedicineStockScreen(),
+                          builder: (context) => AddMedicineStockRootScreen(),
                         ),
                       );
                     },
@@ -98,8 +101,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const StaffManageMedicineScreen(),
+                          builder: (context) => StaffMedicineViewScreen(),
                         ),
                       );
                     },

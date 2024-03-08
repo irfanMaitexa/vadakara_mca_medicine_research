@@ -5,10 +5,13 @@ import 'package:medicine_research/widgets/custom_text_form_field.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class AddMedicineStockScreen extends StatelessWidget {
-  AddMedicineStockScreen({super.key});
+class EditMedicineStockScreen extends StatelessWidget {
+  EditMedicineStockScreen({super.key, required this.stock});
 
-  final _addMedicineFormKey = GlobalKey<FormState>();
+
+  final String  stock; 
+
+  final _editMedicineFormKey = GlobalKey<FormState>();
 
   Map<String, dynamic> _medicineStock = {};
 
@@ -26,9 +29,9 @@ class AddMedicineStockScreen extends StatelessWidget {
         
                   width: MediaQuery.of(context).size.width,
                   child: CustomButton(
-                    text: 'Add',
+                    text: 'Update',
                     onPressed: () {
-                      _addMedicineStock(context);
+                      _UpdateMedicineStock(context);
                     },
                   ),
                 ),
@@ -36,7 +39,7 @@ class AddMedicineStockScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: KButtonColor,
         title: const Text(
-          'Add Stock',
+          'Update Stock',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -44,7 +47,7 @@ class AddMedicineStockScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Form(
-        key: _addMedicineFormKey,
+        key: _editMedicineFormKey,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SingleChildScrollView(
@@ -65,6 +68,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                 CustomFormTextField(
                   hintText: 'Enter name',
                   borderColor: Colors.grey.shade300,
+                  initialValue: stock,
                   validator: (value) {
                     return value!.isEmpty ? 'Enter the name' : null;
                   },
@@ -77,6 +81,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                   'Quantity',
                   style: TextStyle(
                       color: Colors.black,
+
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
@@ -86,6 +91,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                 CustomFormTextField(
                   hintText: 'Enter quantitiy',
                   borderColor: Colors.grey.shade300,
+                  initialValue: stock,
                   validator: (value) {
                     return value!.isEmpty ? 'Enter the quantity' : null;
                   },
@@ -107,6 +113,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                 CustomFormTextField(
                   hintText: 'Enter unit',
                   borderColor: Colors.grey.shade300,
+                  initialValue: stock,
                   validator: (value) {
                     return value!.isEmpty ? 'Enter the unit' : null;
                   },
@@ -128,6 +135,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                 CustomFormTextField(
                   hintText: 'Enter price',
                   borderColor: Colors.grey.shade300,
+                  initialValue: stock,
                   validator: (value) {
                     return value!.isEmpty ? 'Enter the price' : null;
                   },
@@ -147,13 +155,13 @@ class AddMedicineStockScreen extends StatelessWidget {
     );
   }
 
-  _addMedicineStock(BuildContext context) {
-    bool validate = _addMedicineFormKey.currentState?.validate() ?? false;
+  _UpdateMedicineStock(BuildContext context) {
+    bool validate = _editMedicineFormKey.currentState?.validate() ?? false;
 
     if (validate) {
-      _addMedicineFormKey.currentState!.save();
+      _editMedicineFormKey.currentState!.save();
 
-      _addMedicineFormKey.currentState!.reset();
+      _editMedicineFormKey.currentState!.reset();
 
       QuickAlert.show(
         context: context,
