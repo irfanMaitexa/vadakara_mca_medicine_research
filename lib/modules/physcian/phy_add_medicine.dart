@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_research/modules/auth/login.dart';
 import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 import 'package:medicine_research/widgets/custom_text_form_field.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class AddMedicineStockScreen extends StatelessWidget {
-  AddMedicineStockScreen({super.key});
+class PhyAddMedicineScreen extends StatelessWidget {
+  PhyAddMedicineScreen({super.key});
 
   final _addMedicineFormKey = GlobalKey<FormState>();
 
@@ -26,20 +27,21 @@ class AddMedicineStockScreen extends StatelessWidget {
         child: CustomButton(
           text: 'Add',
           onPressed: () {
-            _addMedicineStock(context);
+            _addMedicine(context);
           },
         ),
       ),
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.grey),
         backgroundColor: KButtonColor,
         title: const Text(
-          'Add Stock',
+          'Add Medicine',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         centerTitle: true,
+        
       ),
       body: Form(
         key: _addMedicineFormKey,
@@ -72,7 +74,7 @@ class AddMedicineStockScreen extends StatelessWidget {
                 ),
                 sizedBox,
                 const Text(
-                  'Quantity',
+                  'Description',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -82,18 +84,61 @@ class AddMedicineStockScreen extends StatelessWidget {
                   height: 10,
                 ),
                 CustomFormTextField(
-                  hintText: 'Enter quantitiy',
+                  hintText: 'Enter description',
                   borderColor: Colors.grey.shade300,
                   validator: (value) {
                     return value!.isEmpty ? 'Enter the quantity' : null;
                   },
                   onSaved: (value) {
-                    _medicineStock['qty'] = value;
+                    _medicineStock['desc'] = value;
                   },
                 ),
                 sizedBox,
                 const Text(
-                  'Unit',
+                  'purpose',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                CustomFormTextField(
+                  hintText: 'Enter purpose',
+                  borderColor: Colors.grey.shade300,
+                  validator: (value) {
+                    return value!.isEmpty ? 'Enter the purpose' : null;
+                  },
+                  onSaved: (value) {
+                    _medicineStock['purpose'] = value;
+                  },
+                ),
+                const Text(
+                  'Dosage form',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                CustomFormTextField(
+                  hintText: 'Enter Dosage form',
+                  borderColor: Colors.grey.shade300,
+                  validator: (value) {
+                    return value!.isEmpty ? 'Enter the form' : null;
+                  },
+                  onSaved: (value) {
+                    _medicineStock['form'] = value;
+                  },
+                ),
+                SizedBox(height: 10,),
+                 const Text(
+                  'increadiance',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -103,36 +148,17 @@ class AddMedicineStockScreen extends StatelessWidget {
                   height: 10,
                 ),
                 CustomFormTextField(
-                  hintText: 'Enter unit',
+                  hintText: 'Enter increadiance',
                   borderColor: Colors.grey.shade300,
                   validator: (value) {
-                    return value!.isEmpty ? 'Enter the unit' : null;
+                    return value!.isEmpty ? 'Enter the increadiance' : null;
                   },
                   onSaved: (value) {
-                    _medicineStock['unit'] = value;
+                    _medicineStock['increadiance'] = value;
                   },
                 ),
-                sizedBox,
-                const Text(
-                  'Medicine price',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomFormTextField(
-                  hintText: 'Enter price',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the price' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['price'] = value;
-                  },
-                ),
+                
+               
                 SizedBox(
                   height: 30,
                 ),
@@ -144,7 +170,7 @@ class AddMedicineStockScreen extends StatelessWidget {
     );
   }
 
-  _addMedicineStock(BuildContext context) {
+  _addMedicine(BuildContext context) {
     bool validate = _addMedicineFormKey.currentState?.validate() ?? false;
 
     if (validate) {

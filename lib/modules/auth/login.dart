@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medicine_research/modules/auth/user_registrattion_screen.dart';
+import 'package:medicine_research/modules/physcian/phy_home.dart';
 import 'package:medicine_research/modules/staff/staff_root_screen.dart';
 import 'package:medicine_research/modules/user/user_root_screen.dart';
 import 'package:medicine_research/utils/constants.dart';
@@ -143,16 +144,23 @@ class _LoginScreenState extends State<LoginScreen> {
       passwordError = validatePassword(_passwordController.text);
     });
     if (emailError == null && passwordError == null) {
-      if (_emailController.text == 'user') {
+      if (_emailController.text.trim() == 'user@gmail.com') {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const UserRootScreen()),
             (route) => false);
       }
-      if (_emailController.text == 'staff@gmail.com') {
+      if (_emailController.text.trim() == 'staff@gmail.com') {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const StaffRootScreen()),
+            (route) => false);
+      }
+
+      if (_emailController.text.trim() == 'phy@gmail.com') {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const PhyHomeViewScreen()),
             (route) => false);
       }
 
