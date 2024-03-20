@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_research/db/shared_pref.dart';
 import 'package:medicine_research/modules/auth/login.dart';
 
-void main() {
+void main() async{
+
+   WidgetsFlutterBinding.ensureInitialized();
+
+  await DbService.init();
+
+  
+
+
   runApp(const MyApp());
 }
 

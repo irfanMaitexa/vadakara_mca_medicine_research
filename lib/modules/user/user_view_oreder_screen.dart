@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:medicine_research/db/shared_pref.dart';
 import 'package:medicine_research/utils/constants.dart';
+import 'package:http/http.dart' as http;
 
 class UserViewOrderScreen extends StatefulWidget {
   const UserViewOrderScreen({super.key});
@@ -9,58 +13,66 @@ class UserViewOrderScreen extends StatefulWidget {
 }
 
 class _UserViewOrderScreenState extends State<UserViewOrderScreen> {
-
-
   final orderList = [
     'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
     'https://images.pexels.com/photos/593451/pexels-photo-593451.jpeg?auto=compress&cs=tinysrgb&w=600',
     'https://images.pexels.com/photos/1424538/pexels-photo-1424538.jpeg?auto=compress&cs=tinysrgb&w=600',
   ];
 
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
-      body:  ListView.builder(
-              itemCount: orderList.length,
+      body: FutureBuilder(
+        future: viewOrders(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<dynamic> data = snapshot.data ?? [];
+
+            return ListView.builder(
+              itemCount: data.length,
               itemBuilder: (context, index) => Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-               
                 child: Row(
                   textBaseline: TextBaseline.alphabetic,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.horizontal(
+                        borderRadius: BorderRadius.horizontal(
                             right: Radius.circular(20)),
                         child: Image(
                           fit: BoxFit.fitHeight,
-                          image: NetworkImage(orderList[index]),
+                          image: NetworkImage(
+                            'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                     Expanded(
+                    const SizedBox(width: 20),
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'Medicine 1',
-                            style: TextStyle(
+                            data[index]['medicine_data']['medicine'],
+                            style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 17,
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            'quatity:10',
+                            'quantity:${data[index]['medicine_data']['quantity']}',
                             style: TextStyle(
                                 color: Colors.grey.shade300,
                                 fontSize: 16,
@@ -79,7 +91,30 @@ class _UserViewOrderScreenState extends State<UserViewOrderScreen> {
                   ],
                 ),
               ),
-            ),
+            );
+          }
+        },
+      ),
     );
+  }
+
+  Future<List<dynamic>> viewOrders() async {
+    final url =
+        Uri.parse('${baseUrl}/api/user/view-order/${DbService.getLoginId()}');
+
+    try {
+      final response = await http.get(url);
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['Data'];
+
+        return data;
+      } else {
+        throw Exception('Somthing went wrong');
+      }
+    } catch (error) {
+      rethrow;
+    }
   }
 }

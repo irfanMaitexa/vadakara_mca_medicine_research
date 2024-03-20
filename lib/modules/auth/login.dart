@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:medicine_research/db/shared_pref.dart';
 import 'package:medicine_research/modules/auth/user_registrattion_screen.dart';
 import 'package:medicine_research/modules/physcian/phy_home.dart';
 import 'package:medicine_research/modules/staff/staff_root_screen.dart';
 import 'package:medicine_research/modules/user/user_root_screen.dart';
+
 import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/utils/validator.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 import 'package:medicine_research/widgets/custom_text_field.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key});
@@ -26,6 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? emailError;
   String? passwordError;
+
+  bool loading = false;
 
   @override
   void dispose() {
@@ -93,17 +100,22 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 10,
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 50,
-                child: CustomButton(
-                  text: 'LOG IN',
-                  color: KButtonColor,
-                  onPressed: () {
-                    _loginHandler();
-                  },
-                ),
-              ),
+              loading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: KButtonColor,
+                    ))
+                  : SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      child: CustomButton(
+                        text: 'LOG IN',
+                        color: KButtonColor,
+                        onPressed: () {
+                          _loginHandler();
+                        },
+                      ),
+                    ),
               const SizedBox(
                 height: 30,
               ),
@@ -138,34 +150,91 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _loginHandler() {
+  void _loginHandler() async {
     setState(() {
       emailError = validateEmail(_emailController.text);
       passwordError = validatePassword(_passwordController.text);
     });
     if (emailError == null && passwordError == null) {
-      if (_emailController.text.trim() == 'user@gmail.com') {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const UserRootScreen()),
-            (route) => false);
-      }
-      if (_emailController.text.trim() == 'staff@gmail.com') {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const StaffRootScreen()),
-            (route) => false);
-      }
+      try {
+        setState(() {
+          loading = true;
+        });
+        final url = Uri.parse('$baseUrl/api/login');
+        final response = await http.post(
+          url,
+          body: {
+            'email': _emailController.text.trim(),
+            'password': _passwordController.text.trim(),
+          },
+        );
 
-      if (_emailController.text.trim() == 'phy@gmail.com') {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const PhyHomeViewScreen()),
-            (route) => false);
-      }
+        var responseData = jsonDecode(response.body);
 
-      
+        if (response.statusCode == 200) {
+          DbService.setLoginId(responseData['login_id']);
+
+          if (responseData['role'] == 2) {
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserRootScreen()),
+                  (route) => false);
+
+
+                customSnackBar(context: context, messsage: responseData['message']);
+
+
+            }
+          }
+
+          if (responseData['role'] == 3) {
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const StaffRootScreen()),
+                  (route) => false);
+                  customSnackBar(context: context, messsage: responseData['message']);
+            }
+          }
+
+          
+
+          if (responseData['role'] == 4) {
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PhyHomeViewScreen()),
+                  (route) => false);
+              customSnackBar(context: context, messsage: responseData['message']);
+
+            }
+          }
+
+          setState(() {
+            loading = false;
+          });
+        } else {
+          setState(() {
+            loading = false;
+          });
+
+          if (context.mounted) {
+            customSnackBar(context: context, messsage: responseData['message']);
+          }
+        }
+      } catch (e) {
+        setState(() {
+          loading = false;
+        });
+
+        if (context.mounted) {
+          customSnackBar(context: context, messsage: 'Somthing went wrong');
+        }
+      }
     }
-    
   }
 }

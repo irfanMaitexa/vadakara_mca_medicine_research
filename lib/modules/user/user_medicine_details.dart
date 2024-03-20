@@ -4,9 +4,9 @@ import 'package:medicine_research/widgets/column_text.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 
 class UserMedicineDetails extends StatefulWidget {
-  const UserMedicineDetails({super.key, required this.image});
+  const UserMedicineDetails({super.key, required this.medicineDetails});
 
-  final String image;
+  final Map<String, dynamic> medicineDetails;
 
   @override
   State<UserMedicineDetails> createState() => _UserMedicineDetailsState();
@@ -44,7 +44,7 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          widget.image,
+                          'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
                           fit: BoxFit.fill,
                           width: MediaQuery.of(context).size.width,
                         ),
@@ -53,41 +53,46 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Expanded(
+                     Expanded(
                         flex: 2,
                         child: SingleChildScrollView(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ColumnText(
                                   text1: 'Description',
-                                  text2:
-                                      'Paracetamol is available in various forms, including tablets, capsules, liquid, and effervescent tablets. It is often combined with other medications, such as codeine, to enhance its pain-relieving effects.',
+                                  text2: widget.medicineDetails['description']
                                 ),
                                 sizedBox,
                                 ColumnText(
                                     text1: 'Purpose',
-                                    text2: 'Pain relief, fever reduction'),
+                                    text2: widget.medicineDetails['purpose']),
                                 sizedBox,
                                 ColumnText(
-                                    text1: 'Common Uses:',
-                                    text2:
-                                        'Headaches, muscle aches, arthritis, fever, toothaches, colds'),
+                                    text1: 'Composition',
+                                    text2: widget.medicineDetails['composition']
+                                        
+                                        ),
                                 sizedBox,
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
+                                    text1: 'Strength',
+                                    text2:widget.medicineDetails['strength']
+                                    ),
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
+                                    text1: 'Brand',
+                                    text2: widget.medicineDetails['brand']
+                                    ),
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets')
+                                    text1: 'Quantity',
+                                    text2: widget.medicineDetails['quantity'],
+                                        ),
+
+                              ColumnText(
+                                    text1: 'Price',
+                                    text2: widget.medicineDetails['price'].toString(),
+                                        ),
                               ],
                             ),
                           ),
@@ -105,7 +110,14 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => UserAddOrderScreen(
-                        imageUrl: widget.image,
+                        id: widget.medicineDetails['_id'],
+                        description: widget.medicineDetails['description'],
+                        name: widget.medicineDetails['medicine'],
+                        price: widget.medicineDetails['price'].toString(),
+                      
+
+                        imageUrl:
+                            'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
                       ),
                     ),
                   );
