@@ -9,11 +9,14 @@ class CardWidget extends StatelessWidget {
 
   final Widget ? child;
 
+  final Color ? iconColor;
+
   const CardWidget({
     super.key,
     required this.iconData,
     required this.title,
     required this.onTap,
+     this.iconColor,
     this.padding,
      this.child,
   });
@@ -36,7 +39,7 @@ class CardWidget extends StatelessWidget {
               child ?? Icon(
                 iconData,
                 size: 40.0,
-                color: Colors.white,
+                color: iconColor ?? Colors.white,
               ),
               const SizedBox(height: 15.0),
               Text(

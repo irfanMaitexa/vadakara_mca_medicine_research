@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:medicine_research/db/shared_pref.dart';
+import 'package:medicine_research/modules/user/payment_screen.dart';
 import 'package:medicine_research/modules/user/user_order_confiramation_screen.dart';
 import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/column_text.dart';
@@ -32,6 +33,8 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
   final _quantityController = TextEditingController();
 
   bool _loading = false;
+
+  bool  isPaid  = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,16 +87,28 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      CustomTextField(
+                     isPaid ?   Text(
+                        _quantityController.text,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600),
+                      ) :CustomTextField(
                         hintText: 'Enter Quantity',
                         controller: _quantityController,
                         borderColor: Colors.grey,
                       )
+
+                      ,SizedBox(height: 10,),
+                      if(isPaid)
+                      ColumnText(text1: 'Price', text2:getPrice())
                     ],
                   ),
                 ),
               ),
             ),
+
+            
             _loading
                 ? indicator
                 : Container(
@@ -101,8 +116,28 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: CustomButton(
                       text: 'Place Order',
-                      onPressed: () {
-                        orderMedicine();
+                      onPressed: () async{
+                        if(isPaid){
+                          orderMedicine();
+
+                        
+
+                        }else{
+
+                         if(_quantityController.text.isNotEmpty){
+
+                          isPaid = await Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(),));
+                         if(isPaid){
+                          setState(() {
+                            
+                          });
+                         }
+                         }else{
+
+                          customSnackBar(context: context, messsage: 'Fill Quantity');
+                         }
+                        }
+
                       },
                     ),
                   )
@@ -110,6 +145,13 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
         ),
       ),
     );
+  }
+
+  String getPrice(){
+
+    var res = int.parse(widget.price) * int.parse(_quantityController.text);
+
+    return  res.toString();
   }
 
   Future<void> orderMedicine() async {

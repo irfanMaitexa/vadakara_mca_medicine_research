@@ -92,6 +92,7 @@ class _UserRootScreenState extends State<UserRootScreen> {
             CardWidget(
                 iconData: Icons.logout,
                 title: 'Logout',
+                iconColor: Colors.red,
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
                       context,
