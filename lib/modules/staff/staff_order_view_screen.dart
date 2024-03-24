@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:medicine_research/modules/staff/staff_order_details.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 
 class StaffViewOrderScreen extends StatefulWidget {
@@ -16,71 +21,98 @@ class _StaffViewOrderScreenState extends State<StaffViewOrderScreen> {
     'https://images.pexels.com/photos/1424538/pexels-photo-1424538.jpeg?auto=compress&cs=tinysrgb&w=600',
   ];
 
+ Future<List<dynamic>> fetchOrders() async {
+    final response = await http.get(Uri.parse('https://medicine-management-systems.onrender.com/api/staff/view-orders'));
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      print(jsonData);
+      return jsonData['Data'];
+    } else {
+      throw Exception('Failed to load orders');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: Text('Staff Orders'),
       ),
-      body: ListView.builder(
-        itemCount: orderList.length,
-        itemBuilder: (context, index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            textBaseline: TextBaseline.alphabetic,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius:
-                      const BorderRadius.horizontal(right: Radius.circular(20)),
-                  child: Image(
-                    fit: BoxFit.fitHeight,
-                    image: NetworkImage(orderList[index]),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Medicine 1',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'quatity:10',
-                      style: TextStyle(
-                          color: Colors.grey.shade300,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    CustomButton(
-                      text: 'View more',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StaffMedicineDetails(
-                              image: orderList[index],
-                            ),
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchOrders(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(color: KButtonColor,));
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final orderList = snapshot.data as List<dynamic>;
+            return ListView.builder(
+              itemCount: orderList.length,
+              itemBuilder: (context, index) {
+                final order = orderList[index];
+                final medicineData = order['medicine_data'];
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    textBaseline: TextBaseline.alphabetic,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.horizontal(right: Radius.circular(20)),
+                          child: Image(
+                            fit: BoxFit.fitHeight,
+                            image: NetworkImage(medicineData['image']),
                           ),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              medicineData['medicine'],
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'quantity: ${order['unit']}',
+                              style: TextStyle(
+                                color: Colors.grey.shade300,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            CustomButton(text: 'View more', onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => StaffMedicineDetails(
+                                      image: medicineData['image'],
+                                      details: medicineData,
+                                      // Pass other details as needed
+                                    ),
+                                  ),
+                                );
+                            },)
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

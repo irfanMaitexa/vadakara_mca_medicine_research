@@ -17,10 +17,12 @@ class UserAddOrderScreen extends StatefulWidget {
       required this.description,
       required this.name,
       required this.price,
+      required this.stock,
       required this.id});
 
   final String imageUrl;
   final String description;
+  final String stock;
   final String name;
   final String price;
   final String id;
@@ -35,6 +37,9 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
   bool _loading = false;
 
   bool  isPaid  = false;
+
+
+  String result = '0';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +82,10 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
                       const SizedBox(
                         height: 25,
                       ),
+                      ColumnText(text1: 'Stock', text2: widget.stock),
+                      const SizedBox(
+                        height: 25,
+                      ),
                       const Text(
                         'Quantity',
                         style: TextStyle(
@@ -89,17 +98,28 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
                       ),
                      isPaid ?   Text(
                         _quantityController.text,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontSize: 17,
                             fontWeight: FontWeight.w600),
                       ) :CustomTextField(
                         hintText: 'Enter Quantity',
                         controller: _quantityController,
+                        onChanged: (value) {
+                          result = getPrice();
+
+                          print(result);
+
+                          setState(() {
+                            
+                          });
+                          
+                          
+                        },
                         borderColor: Colors.grey,
                       )
 
-                      ,SizedBox(height: 10,),
+                      ,const SizedBox(height: 10,),
                       if(isPaid)
                       ColumnText(text1: 'Price', text2:getPrice())
                     ],
@@ -111,36 +131,54 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
             
             _loading
                 ? indicator
-                : Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: CustomButton(
-                      text: 'Place Order',
-                      onPressed: () async{
-                        if(isPaid){
-                          orderMedicine();
-
-                        
-
-                        }else{
-
-                         if(_quantityController.text.isNotEmpty){
-
-                          isPaid = await Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(),));
-                         if(isPaid){
-                          setState(() {
-                            
-                          });
-                         }
-                         }else{
-
-                          customSnackBar(context: context, messsage: 'Fill Quantity');
-                         }
-                        }
-
-                      },
+                : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Total',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                    
+                          Text(result.toString(),style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
+                    
+                        ],
+                      ),
                     ),
-                  )
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: CustomButton(
+                          text: 'Place Order',
+                          onPressed: () async{
+
+                            print('hi');
+                            if(isPaid){
+                              orderMedicine();
+
+                            
+
+                            }else{
+
+                             if(_quantityController.text.isNotEmpty){
+
+                              isPaid = await Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(),));
+                             if(isPaid){
+                              setState(() {
+                                
+                              });
+                             }
+                             }else{
+
+                              customSnackBar(context: context, messsage: 'Fill Quantity');
+                             }
+                            }
+
+                          },
+                        ),
+                      ),
+                  ],
+                )
           ],
         ),
       ),

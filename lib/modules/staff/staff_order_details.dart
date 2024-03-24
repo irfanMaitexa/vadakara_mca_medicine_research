@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:medicine_research/modules/user/user_add_order_screen.dart';
+import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/column_text.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:http/http.dart' as http;
 
 class StaffMedicineDetails extends StatefulWidget {
-  const StaffMedicineDetails({super.key, required this.image});
+  const StaffMedicineDetails(
+      {super.key, required this.image, required this.details});
 
   final String image;
+
+  final Map<String, dynamic> details;
 
   @override
   State<StaffMedicineDetails> createState() => _StaffMedicineDetailsState();
@@ -17,6 +23,7 @@ class StaffMedicineDetails extends StatefulWidget {
 class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
   @override
   Widget build(BuildContext context) {
+    print(widget.details);
     const sizedBox = SizedBox(
       height: 10,
     );
@@ -42,7 +49,7 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
                   children: [
                     Expanded(
                         child: Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
@@ -55,35 +62,27 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Expanded(
+                    Expanded(
                         flex: 2,
                         child: SingleChildScrollView(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ColumnText(
-                                  text1: 'Suppliar name',
-                                  text2:'abc'
-                                ),
-                                sizedBox,
-                                ColumnText(
-                                    text1: 'Address',
-                                    text2: 'Abc street'),
                                 sizedBox,
                                 ColumnText(
                                     text1: 'Quantitiy:',
-                                    text2: '20'
-                                    ),
+                                    text2: widget.details['quantity']),
                                 sizedBox,
                                 ColumnText(
-                                  text1: 'Description',
-                                  text2:
-                                      'Paracetamol is available in various forms, including tablets, capsules, liquid, and effervescent tablets. It is often combined with other medications, such as codeine, to enhance its pain-relieving effects.',
+                                    text1: 'Description',
+                                    text2: widget.details['description']),
+                                sizedBox,
+                                ColumnText(
+                                  text1: 'Price',
+                                  text2: widget.details['price'].toString(),
                                 ),
-                               
-                            
                               ],
                             ),
                           ),
@@ -97,9 +96,7 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
               child: CustomButton(
                 text: 'Confirm',
                 onPressed: () {
-
                   _orderConfirmation(context);
-                  
                 },
               ),
             )
@@ -109,17 +106,32 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
     );
   }
 
-  _orderConfirmation(BuildContext context){
+  _orderConfirmation(BuildContext context) async {
+    final response = await http
+        .put(Uri.parse('$baseUrl/api/staff/order-status-update/${widget.details['_id']}'));
 
+        
 
-    QuickAlert.show(
+    
+
+    if (response.statusCode == 200) {
+      if(context.mounted){
+        QuickAlert.show(
         context: context,
         type: QuickAlertType.success,
         text: 'Transaction Completed Successfully!',
       );
+      }
+    } else {
+     if(context.mounted){
 
-    
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        text: 'Error!',
+      );
+
+     }
+    }
   }
-
-
 }

@@ -29,6 +29,13 @@ class _UserRootScreenState extends State<UserRootScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: NetworkImage('https://images.pexels.com/photos/208512/pexels-photo-208512.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'))
+        ),
         padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
         child: GridView.count(
           crossAxisCount: 2,

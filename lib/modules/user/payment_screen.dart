@@ -83,7 +83,7 @@ class PaymentScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Spacer(),
+              Expanded(child: Image.asset('asset/images/car.png',fit: BoxFit.fill,)),
               const SizedBox(height: 20.0),
               CustomButton(text: 'Add', onPressed: () {
 

@@ -1,19 +1,40 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:medicine_research/modules/auth/login.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
 import 'package:medicine_research/widgets/custom_text_form_field.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:http/http.dart' as http;
 
-class PhyAddMedicineScreen extends StatelessWidget {
+class PhyAddMedicineScreen extends StatefulWidget {
   PhyAddMedicineScreen({super.key});
 
+  @override
+  State<PhyAddMedicineScreen> createState() => _PhyAddMedicineScreenState();
+}
+
+class _PhyAddMedicineScreenState extends State<PhyAddMedicineScreen> {
   final _addMedicineFormKey = GlobalKey<FormState>();
 
-  Map<String, dynamic> _medicineStock = {};
+  Map<String, String> medicineStock = {};
 
   bool _loading = false;
+
+  File? image;
+
+  void _pickImage(ImageSource source) async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: source);
+    if (pickedImage != null) {
+      setState(() {
+        image = File(pickedImage.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,160 +42,264 @@ class PhyAddMedicineScreen extends StatelessWidget {
       height: 20,
     );
     return Scaffold(
-      bottomSheet: Container(
-        color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        child: CustomButton(
-          text: 'Add',
-          onPressed: () {
-            _addMedicine(context);
-          },
-        ),
-      ),
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.grey),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: KButtonColor,
         title: const Text(
           'Add Medicine',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        
       ),
-      body: Form(
-        key: _addMedicineFormKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                sizedBox,
-                const Text(
-                  'Medicine name',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
+      body: _loading
+          ? indicator
+          : Form(
+              key: _addMedicineFormKey,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(
+                            'https://images.pexels.com/photos/5998512/pexels-photo-5998512.jpeg?auto=compress&cs=tinysrgb&w=600'))),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        image != null
+                            ? Container(
+                                child: Column(
+                                children: [
+                                  Image.file(
+                                    image!,
+                                    height: 200,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                  CustomButton(
+                                    text: 'change',
+                                    onPressed: () {
+                                      showpopUp(context);
+                                    },
+                                  )
+                                ],
+                              ))
+                            : Row(
+                                children: [
+                                  const Text(
+                                    'Select image',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  const Spacer(),
+                                  CustomButton(
+                                      text: 'select',
+                                      onPressed: () {
+                                        showpopUp(context);
+                                      })
+                                ],
+                              ),
+                        sizedBox,
+                        const Text(
+                          'Medicine name',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter name',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty ? 'Enter the name' : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['medicine'] = value!;
+                          },
+                        ),
+                        sizedBox,
+                        const Text(
+                          'Composition',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter composition',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty ? 'Enter the quantity' : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['composition'] = value!;
+                          },
+                        ),
+                        sizedBox,
+                        const Text(
+                          'Brand',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter brand',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty ? 'Enter the brand' : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['brand'] = value!;
+                          },
+                        ),
+                        const Text(
+                          'Strength',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter strength',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty ? 'Enter the form' : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['strength'] = value!;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          'Purpose',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter purpose',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty ? 'Enter the purpose' : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['purpose'] = value!;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        const Text(
+                          'Description',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        CustomFormTextField(
+                          hintText: 'Enter description',
+                          borderColor: Colors.grey.shade300,
+                          validator: (value) {
+                            return value!.isEmpty
+                                ? 'Enter the description'
+                                : null;
+                          },
+                          onSaved: (value) {
+                            medicineStock['description'] = value!;
+                          },
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          color: Colors.transparent,
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: CustomButton(
+                              text: 'Add',
+                              onPressed: () {
+                                _addMedicine(context);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomFormTextField(
-                  hintText: 'Enter name',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the name' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['name'] = value;
-                  },
-                ),
-                sizedBox,
-                const Text(
-                  'Description',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomFormTextField(
-                  hintText: 'Enter description',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the quantity' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['desc'] = value;
-                  },
-                ),
-                sizedBox,
-                const Text(
-                  'purpose',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
-                CustomFormTextField(
-                  hintText: 'Enter purpose',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the purpose' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['purpose'] = value;
-                  },
-                ),
-                const Text(
-                  'Dosage form',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
-                CustomFormTextField(
-                  hintText: 'Enter Dosage form',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the form' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['form'] = value;
-                  },
-                ),
-                SizedBox(height: 10,),
-                 const Text(
-                  'increadiance',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomFormTextField(
-                  hintText: 'Enter increadiance',
-                  borderColor: Colors.grey.shade300,
-                  validator: (value) {
-                    return value!.isEmpty ? 'Enter the increadiance' : null;
-                  },
-                  onSaved: (value) {
-                    _medicineStock['increadiance'] = value;
-                  },
-                ),
-                
-               
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
-  _addMedicine(BuildContext context) {
+  Future<dynamic> showpopUp(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: const Text('Take a photo'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.image),
+                title: const Text('Choose from gallery'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _addMedicine(BuildContext context) async {
     bool validate = _addMedicineFormKey.currentState?.validate() ?? false;
 
     if (validate) {
       _addMedicineFormKey.currentState!.save();
+
+      medicineStock['price'] = '0';
+      medicineStock['quantity'] = '0';
+
+      await addMedicineDB(medicineStock, image!.path);
 
       _addMedicineFormKey.currentState!.reset();
 
@@ -183,6 +308,39 @@ class PhyAddMedicineScreen extends StatelessWidget {
         type: QuickAlertType.success,
         text: 'Transaction Completed Successfully!',
       );
+    }
+  }
+
+  Future<void> addMedicineDB(Map<String, String> data, String filepath) async {
+    const url = '$baseUrl/api/physician/add-med';
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+      request.headers['Content-Type'] = 'multipart/form-data';
+      request.fields.addAll(data);
+
+      setState(() {
+        _loading = true;
+      });
+
+      var image = await http.MultipartFile.fromPath('image', filepath);
+      request.files.add(image);
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _loading = false;
+        });
+      } else {
+        setState(() {
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _loading = true;
+      });
     }
   }
 }

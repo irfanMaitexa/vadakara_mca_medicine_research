@@ -1,18 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:medicine_research/modules/user/user_add_order_screen.dart';
+import 'package:medicine_research/modules/staff/staff_root_screen.dart';
+import 'package:medicine_research/modules/staff/staff_update_stock.dart';
+import 'package:medicine_research/utils/constants.dart';
 import 'package:medicine_research/widgets/column_text.dart';
 import 'package:medicine_research/widgets/custom_button.dart';
+import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class StaffMedicineDetailsScreen extends StatefulWidget {
-  const StaffMedicineDetailsScreen({super.key, required this.image});
+  const StaffMedicineDetailsScreen({super.key, required this.image, required this.medicineDetails});
 
   final String image;
+  final Map<String, dynamic> medicineDetails;
 
   @override
   State<StaffMedicineDetailsScreen> createState() => _StaffMedicineDetailsScreenState();
 }
 
 class _StaffMedicineDetailsScreenState extends State<StaffMedicineDetailsScreen> {
+
+  bool _loading = false;
+
+
+
+  Future<void> deleteMedicineForStaff(String id) async {
+
+  final url = Uri.parse('$baseUrl/api/staff/delete-med/$id');
+
+
+  try {
+    setState(() {
+      _loading = true;
+    });
+    final response = await http.delete(url);
+
+    if (response.statusCode == 200) {
+
+
+      if(context.mounted){
+
+        setState(() {
+          _loading = false;
+        });
+        
+
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => StaffRootScreen(),), (route) => false);
+      }
+      
+    } else {
+       if(context.mounted){
+        setState(() {
+          _loading = false;
+        });
+        customSnackBar(context: context, messsage: 'Faild');
+       }
+    }
+  } catch (e) {
+    setState(() {
+      _loading = false;
+    });
+     if(context.mounted){
+      customSnackBar(context: context, messsage: 'Faild');
+     }
+  }
+}
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     const sizedBox = SizedBox(
@@ -22,6 +80,36 @@ class _StaffMedicineDetailsScreenState extends State<StaffMedicineDetailsScreen>
       backgroundColor: Colors.grey.shade300,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,
+      ),
+      bottomSheet: Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'Update medicine',
+              onPressed: () async{
+
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateMedicineStaff(stock:'10' ,medicineStock: widget.medicineDetails,),));
+          
+              
+                
+              },
+            ),
+          ),
+          Expanded(
+            child: CustomButton(
+              text: 'Delete medicine',
+              color: Colors.red,
+              onPressed: () {
+
+                deleteMedicineForStaff(widget.medicineDetails['_id']);
+          
+              
+                
+              },
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.only(
@@ -40,11 +128,11 @@ class _StaffMedicineDetailsScreenState extends State<StaffMedicineDetailsScreen>
                   children: [
                     Expanded(
                         child: Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          widget.image,
+                          widget.medicineDetails['image'],
                           fit: BoxFit.fill,
                           width: MediaQuery.of(context).size.width,
                         ),
@@ -53,45 +141,57 @@ class _StaffMedicineDetailsScreenState extends State<StaffMedicineDetailsScreen>
                     const SizedBox(
                       height: 10,
                     ),
-                    const Expanded(
+
+                     Expanded(
                         flex: 2,
                         child: SingleChildScrollView(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ColumnText(
                                   text1: 'Description',
-                                  text2:
-                                      'Paracetamol is available in various forms, including tablets, capsules, liquid, and effervescent tablets. It is often combined with other medications, such as codeine, to enhance its pain-relieving effects.',
+                                  text2: widget.medicineDetails['description']
                                 ),
                                 sizedBox,
                                 ColumnText(
                                     text1: 'Purpose',
-                                    text2: 'Pain relief, fever reduction'),
+                                    text2: widget.medicineDetails['purpose']),
                                 sizedBox,
                                 ColumnText(
-                                    text1: 'Common Uses:',
-                                    text2:
-                                        'Headaches, muscle aches, arthritis, fever, toothaches, colds'),
+                                    text1: 'Composition',
+                                    text2: widget.medicineDetails['composition']
+                                        
+                                        ),
                                 sizedBox,
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
+                                    text1: 'Strength',
+                                    text2:widget.medicineDetails['strength']
+                                    ),
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
+                                    text1: 'Brand',
+                                    text2: widget.medicineDetails['brand']
+                                    ),
                                 ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets')
+                                    text1: 'Quantity',
+                                    text2: widget.medicineDetails['quantity'],
+                                        ),
+
+                              ColumnText(
+                                    text1: 'Price',
+                                    text2: widget.medicineDetails['price'].toString(),
+                                        ),
+
+                                        SizedBox(height: 100,)
                               ],
                             ),
                           ),
                         ))
+                 
+                 
+                  
+                  
                   ],
                 ),
               ),

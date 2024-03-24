@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:medicine_research/widgets/column_text.dart';
-
+import 'package:medicine_research/widgets/custom_button.dart';
 
 class PhyMedicineDetailsScreen extends StatefulWidget {
-  const PhyMedicineDetailsScreen({super.key, required this.image});
+  const PhyMedicineDetailsScreen({super.key, required this.medicineDetails});
 
-  final String image;
+  final Map<String, dynamic> medicineDetails;
 
   @override
-  State<PhyMedicineDetailsScreen> createState() => _PhyMedicineDetailsScreenState();
+  State<PhyMedicineDetailsScreen> createState() =>
+      _PhyMedicineDetailsScreenState();
 }
 
 class _PhyMedicineDetailsScreenState extends State<PhyMedicineDetailsScreen> {
-
-  
   @override
   Widget build(BuildContext context) {
     const sizedBox = SizedBox(
@@ -24,81 +23,95 @@ class _PhyMedicineDetailsScreenState extends State<PhyMedicineDetailsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: 30,
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Card(
-                elevation: 1,
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          widget.image,
-                          fit: BoxFit.fill,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                    )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Expanded(
-                        flex: 2,
-                        child: SingleChildScrollView(
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fill,
+                image: NetworkImage(
+          'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+          
+        ))),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: 30,
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Card(
+                  elevation: 1,
+                  color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ColumnText(
-                                  text1: 'Description',
-                                  text2:
-                                      'Paracetamol is available in various forms, including tablets, capsules, liquid, and effervescent tablets. It is often combined with other medications, such as codeine, to enhance its pain-relieving effects.',
-                                ),
-                                sizedBox,
-                                ColumnText(
-                                    text1: 'Purpose',
-                                    text2: 'Pain relief, fever reduction'),
-                                sizedBox,
-                                ColumnText(
-                                    text1: 'Common Uses:',
-                                    text2:
-                                        'Headaches, muscle aches, arthritis, fever, toothaches, colds'),
-                                sizedBox,
-                                ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
-                                ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets'),
-                                ColumnText(
-                                    text1: 'Dosage Form',
-                                    text2:
-                                        'Tablets, capsules, liquid, effervescent tablets')
-                              ],
-                            ),
+                        padding: const EdgeInsets.all(10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            widget.medicineDetails['image'],
+                            fit: BoxFit.fill,
+                            width: MediaQuery.of(context).size.width,
                           ),
-                        ))
-                  ],
+                        ),
+                      )),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                          flex: 2,
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ColumnText(
+                                      text1: 'Description',
+                                      text2: widget
+                                          .medicineDetails['description']),
+                                  sizedBox,
+                                  ColumnText(
+                                      text1: 'Purpose',
+                                      text2: widget.medicineDetails['purpose']),
+                                  sizedBox,
+                                  ColumnText(
+                                      text1: 'Composition',
+                                      text2: widget
+                                          .medicineDetails['composition']),
+                                  sizedBox,
+                                  ColumnText(
+                                      text1: 'Strength',
+                                      text2:
+                                          widget.medicineDetails['strength']),
+                                  ColumnText(
+                                      text1: 'Brand',
+                                      text2: widget.medicineDetails['brand']),
+                                  ColumnText(
+                                    text1: 'Quantity',
+                                    text2: widget.medicineDetails['quantity'],
+                                  ),
+                                  ColumnText(
+                                    text1: 'Price',
+                                    text2: widget.medicineDetails['price']
+                                        .toString(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ))
+                    ],
+                  ),
                 ),
               ),
-            ),
-          
-          ],
+            ],
+          ),
         ),
       ),
     );

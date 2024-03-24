@@ -97,6 +97,8 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                             ),
                           ),
                         ))
+                 
+                 
                   ],
                 ),
               ),
@@ -114,6 +116,7 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                         description: widget.medicineDetails['description'],
                         name: widget.medicineDetails['medicine'],
                         price: widget.medicineDetails['price'].toString(),
+                        stock: '0',
                       
 
                         imageUrl:
@@ -128,5 +131,8 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
         ),
       ),
     );
+  
+  
+  
   }
 }

@@ -1,14 +1,14 @@
 import 'package:action_slider/action_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:medicine_research/db/shared_pref.dart';
 import 'package:medicine_research/modules/auth/login.dart';
-import 'package:medicine_research/modules/staff/add_medicine_stock_screen.dart';
 import 'package:medicine_research/modules/staff/staff_medicine_view.dart';
-import 'package:medicine_research/modules/staff/staff_stock_manage_medicine_screen.dart';
 import 'package:medicine_research/modules/staff/staff_order_view_screen.dart';
 import 'package:medicine_research/modules/staff/staff_stock_root_screen.dart';
 import 'package:medicine_research/modules/user/widgets/card_widget.dart';
 import 'package:medicine_research/utils/constants.dart';
+import 'package:http/http.dart' as http;
 
 class StaffRootScreen extends StatefulWidget {
   const StaffRootScreen({super.key});
@@ -18,7 +18,61 @@ class StaffRootScreen extends StatefulWidget {
 }
 
 class _StaffRootScreenState extends State<StaffRootScreen> {
+
+
   bool _loading = false;
+
+  Future<void> fetchProfileForStaff(String loginId) async {
+    final url = Uri.parse('$baseUrl/api/profile/staff/$loginId');
+
+    try {
+      setState(() {
+        _loading =true;
+      });
+      final response = await http.get(url);
+
+      print(response.body);
+
+      if (response.statusCode == 200) {
+
+        setState(() {
+          _loading = false;
+        });
+      } else {
+        setState(() {
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+          _loading = false;
+        });
+    }
+  }
+
+  Future<void> updateAttendance() async {
+    var url = Uri.parse(
+        '$baseUrl/api/staff/attendance-med/${DbService.getLoginId()}');
+    var body = {"isPresent": true};
+    try {
+      var response = await http.put(url, body: body);
+
+      print(response.body);
+      if (response.statusCode == 200) {
+      } else {}
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+
+    fetchProfileForStaff(DbService.getLoginId()!);
+    
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +85,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
         backgroundColor: KButtonColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
+      body: _loading ? indicator  :Column(
         children: [
           Expanded(
             child: Padding(
@@ -101,7 +155,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => StaffMedicineViewScreen(),
+                          builder: (context) => const StaffMedicineViewScreen(),
                         ),
                       );
                     },
@@ -133,7 +187,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           ActionSlider.standard(
@@ -143,8 +197,20 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
             rolling: true,
             action: (controller) async {
               controller.loading();
-              await Future.delayed(const Duration(seconds: 3));
-              controller.success();
+
+              var url = Uri.parse(
+                  '$baseUrl/api/staff/attendance-med/${DbService.getLoginId()}');
+              var body = {"isPresent": 'true'};
+
+              var response = await http.put(url, body: body);
+
+              if (response.statusCode == 200) {
+                controller.success();
+              } else {
+                if (context.mounted) {
+                  customSnackBar(context: context, messsage: 'Faild');
+                }
+              }
             },
 
             child: const Text(

@@ -10,8 +10,9 @@ class CustomTextField extends StatelessWidget {
   final Color ? borderColor;
   final int ? minLine;
   final int ? maxLines;
+   void Function(String) ? onChanged;
 
-  const CustomTextField({
+   CustomTextField({
     Key? key,
     required this.hintText,
     required this.controller,
@@ -21,7 +22,8 @@ class CustomTextField extends StatelessWidget {
     this.obscureText,
     this.borderColor,
     this.maxLines,
-    this.minLine
+    this.minLine,
+    this.onChanged
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: input,
+      onChanged: onChanged,
       obscureText: obscureText??false,
       minLines: minLine,
       maxLines: maxLines??1,

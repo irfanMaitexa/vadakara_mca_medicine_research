@@ -21,21 +21,8 @@ class AddMedicineStockRootScreen extends StatelessWidget {
       height: 20,
     );
     return Scaffold(
-      bottomSheet: Container(
-        color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        child: CustomButton(
-          text: 'Add Stock',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddMedicineStockScreen(),
-              ),
-            );
-          },
-        ),
-      ),
+      
+      
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: KButtonColor,

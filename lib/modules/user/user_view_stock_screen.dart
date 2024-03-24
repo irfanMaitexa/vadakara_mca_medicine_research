@@ -14,20 +14,22 @@ class UserViewStockSceeen extends StatefulWidget {
 class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
   final _searchController = TextEditingController();
 
-  final _medicineList = [
-    'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
-    'https://images.pexels.com/photos/593451/pexels-photo-593451.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/1424538/pexels-photo-1424538.jpeg?auto=compress&cs=tinysrgb&w=600',
-  ];
+  
 
-  Future<List<dynamic>> _fetchMedicineData() async {
+  Future<dynamic> _fetchMedicineData() async {
     final url = Uri.parse('$baseUrl/api/view-med');
     final response = await http.get(url);
+
+
+    
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
 
       final List<dynamic> data = jsonData['data'];
+
+      
+      
       return data;
     } else {
       throw Exception('Failed to load data');
@@ -63,7 +65,7 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
             height: 30,
           ),
           Expanded(
-              child: FutureBuilder<List<dynamic>>(
+              child: FutureBuilder(
                   future: _fetchMedicineData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,10 +73,16 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
-                      List<dynamic> medicineList = snapshot.data ?? [];
 
-                      return ListView.builder(
-                        itemCount: _medicineList.length,
+                      
+                      List<dynamic> medicineList = snapshot.data?? [];
+                      //where((e)=>e['price']!=0 || e['stock'] > 1 ).toList();
+
+                     
+                      
+
+                      return  ListView.builder(
+                        itemCount: medicineList.length,
                         itemBuilder: (context, index) => Container(
                           height: 150,
                           margin: const EdgeInsets.symmetric(
@@ -97,7 +105,7 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
                                         child: Image(
                                           fit: BoxFit.fitHeight,
                                           image: NetworkImage(
-                                              _medicineList[index]),
+                                              medicineList[index]['image']),
                                         ),
                                       ),
                                     ),
@@ -146,22 +154,30 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
                                 right: 0,
                                 child: TextButton(
                                   onPressed: () {
+
+
+                                    
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             UserAddOrderScreen(
-                                          id: medicineList[index]['_id'],
-                                          description: medicineList[index]
-                                              ['description'],
-                                          name: medicineList[index]['medicine'],
-                                          price: medicineList[index]['price']
+                                          id: medicineList[index]['_id'].toString(),
+                                          description: medicineList[index]['description'].toString(),
+                                          name: medicineList[index]['medicine'].toString(),
+                                          price: medicineList[index]['price'].toString()
                                               .toString(),
-                                          imageUrl:
-                                              'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+                                          imageUrl:medicineList[index]['image'].toString(),
+                                          stock:medicineList[index]['stock'].toString()
+
                                         ),
                                       ),
                                     );
+                                  
+                                  
+                                  
+                                  
                                   },
                                   child: Text(
                                     'Order Now >',
@@ -170,10 +186,15 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
                                   ),
                                 ),
                               )
+                            
+                            
+                            
                             ],
                           ),
                         ),
                       );
+                    
+                    
                     }
                   }))
         ],
