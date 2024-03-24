@@ -44,7 +44,7 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+                          widget.medicineDetails['image'],
                           fit: BoxFit.fill,
                           width: MediaQuery.of(context).size.width,
                         ),
@@ -117,10 +117,10 @@ class _UserMedicineDetailsState extends State<UserMedicineDetails> {
                         name: widget.medicineDetails['medicine'],
                         price: widget.medicineDetails['price'].toString(),
                         stock: '0',
+                        imageUrl:widget.medicineDetails['image']
                       
 
-                        imageUrl:
-                            'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+                      
                       ),
                     ),
                   );
