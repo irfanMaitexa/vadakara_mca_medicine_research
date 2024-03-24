@@ -46,14 +46,17 @@ class _UserViewOrderScreenState extends State<UserViewOrderScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   children: [
-                    const Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(20)),
-                        child: Image(
-                          fit: BoxFit.fitHeight,
-                          image: NetworkImage(
-                            'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg',
+                   Expanded(
+                      child: SizedBox(
+                        height: 100,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.horizontal(
+                              right: Radius.circular(20)),
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(
+                              data[index]['medicine_data']['image']
+                            ),
                           ),
                         ),
                       ),
@@ -78,8 +81,8 @@ class _UserViewOrderScreenState extends State<UserViewOrderScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500),
                           ),
-                          const Text(
-                            'completed',
+                           Text(
+                            '${data[index]['status']}',
                             style: TextStyle(
                                 color: Colors.green,
                                 fontSize: 15,

@@ -37,102 +37,115 @@ class _UserPhysicianScreenState extends State<UserPhysicianScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text('Our Physcians'),
+        backgroundColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Our Physcians',style: TextStyle(color: Colors.white),),
       ),
-      body: FutureBuilder(
-        future: _fetchphy(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            List<dynamic> data = snapshot.data ?? [];
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          image: DecorationImage(image: NetworkImage('https://images.pexels.com/photos/5327647/pexels-photo-5327647.jpeg?auto=compress&cs=tinysrgb&w=600'),fit: BoxFit.fill)
+        ),
+        child: FutureBuilder(
+          future: _fetchphy(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              List<dynamic> data = snapshot.data ?? [];
+      
+              return Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GridView.count(
+                        scrollDirection: Axis.vertical,
+                        crossAxisCount: 2,
+                        childAspectRatio: .55,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 10,
+                        children: List.generate(
+                          data.length,
+                          (index) => GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 150,
+                              padding: EdgeInsets.all(10),
+                              decoration:  BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
 
-            return Column(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: GridView.count(
-                      scrollDirection: Axis.vertical,
-                      crossAxisCount: 2,
-                      childAspectRatio: .55,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 10,
-                      children: List.generate(
-                        data.length,
-                        (index) => GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: 150,
-                            decoration: const BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.network(
-                                  _physicianList[index],
-                                  fit: BoxFit.fill,
-                                  height: 120,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10)),
-                                        border: Border.all(
-                                            color: Colors.grey.shade200)),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          data[index]['name'],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(
+                                    _physicianList[index],
+                                    fit: BoxFit.fill,
+                                    height: 120,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(
+                                              bottomLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10)),
+                                          border: Border.all(
+                                              color: Colors.grey.shade200)),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data[index]['name'],
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          data[index]['phone'],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
+                                          const SizedBox(
+                                            height: 5,
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
+                                          Text(
+                                            data[index]['phone'],
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            );
-          }
-        },
+                  )
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }
