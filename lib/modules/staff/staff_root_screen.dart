@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:action_slider/action_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +23,8 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
 
 
   bool _loading = false;
+  int attendenceCount = 0;
+  bool isAttend = false;
 
   Future<void> fetchProfileForStaff(String loginId) async {
     final url = Uri.parse('$baseUrl/api/profile/staff/$loginId');
@@ -31,19 +35,37 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
       });
       final response = await http.get(url);
 
-      print(response.body);
+      
 
       if (response.statusCode == 200) {
+
+        var data = jsonDecode(response.body)['data'][0];
+
+        var today = "${DateTime.now().day}/0${DateTime.now().month}/${DateTime.now().year}";
+
+
+        data['attendance'].forEach((e){
+
+           isAttend = e['date'] == today;
+        });  
+
+
+        
+
+
+        attendenceCount = data['attendance'].length;
 
         setState(() {
           _loading = false;
         });
       } else {
+        print(response.body);
         setState(() {
           _loading = false;
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
           _loading = false;
         });
@@ -97,8 +119,8 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
                       iconData: Icons.inventory,
                       title: 'Attendence',
                       onTap: () {},
-                      child: const Text(
-                        '30',
+                      child:  Text(
+                        attendenceCount.toString(),
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),
@@ -190,6 +212,8 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
           const SizedBox(
             height: 10,
           ),
+
+          if(!isAttend)
           ActionSlider.standard(
             backgroundColor: KButtonColor,
             toggleColor: Colors.white,
@@ -203,6 +227,7 @@ class _StaffRootScreenState extends State<StaffRootScreen> {
               var body = {"isPresent": 'true'};
 
               var response = await http.put(url, body: body);
+              print(response.body);
 
               if (response.statusCode == 200) {
                 controller.success();

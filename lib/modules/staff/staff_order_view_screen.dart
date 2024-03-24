@@ -91,8 +91,8 @@ class _StaffViewOrderScreenState extends State<StaffViewOrderScreen> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            CustomButton(text: 'View more', onPressed: () {
-                              Navigator.push(
+                            CustomButton(text: 'View more', onPressed: () async{
+                            final ref =  await   Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => StaffMedicineDetails(
@@ -102,6 +102,12 @@ class _StaffViewOrderScreenState extends State<StaffViewOrderScreen> {
                                     ),
                                   ),
                                 );
+
+                              if(ref){
+                                setState(() {
+                                  
+                                });
+                              }
                             },)
                           ],
                         ),

@@ -21,6 +21,9 @@ class StaffMedicineDetails extends StatefulWidget {
 }
 
 class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
+
+
+  bool _loading =  false;
   @override
   Widget build(BuildContext context) {
     print(widget.details);
@@ -107,6 +110,10 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
   }
 
   _orderConfirmation(BuildContext context) async {
+
+    setState(() {
+      _loading = true;
+    });
     final response = await http
         .put(Uri.parse('$baseUrl/api/staff/order-status-update/${widget.details['_id']}'));
 
@@ -121,6 +128,10 @@ class _StaffMedicineDetailsState extends State<StaffMedicineDetails> {
         type: QuickAlertType.success,
         text: 'Transaction Completed Successfully!',
       );
+
+       Navigator.pop(context,true);
+
+      _loading = false;
       }
     } else {
      if(context.mounted){

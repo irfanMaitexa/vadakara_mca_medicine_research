@@ -75,8 +75,7 @@ class _UserViewStockSceeenState extends State<UserViewStockSceeen> {
                     } else {
 
                       
-                      List<dynamic> medicineList = snapshot.data?? [];
-                      //where((e)=>e['price']!=0 || e['stock'] > 1 ).toList();
+                      List<dynamic> medicineList = snapshot.data.where((e)=>e['price']!=0 || e['stock'] > 1 ).toList();
 
                      
                       

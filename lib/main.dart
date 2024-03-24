@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medicine_research/db/shared_pref.dart';
 import 'package:medicine_research/modules/auth/login.dart';
-import 'package:medicine_research/modules/physcian/phy_home.dart';
-import 'package:medicine_research/modules/staff/staff_root_screen.dart';
-import 'package:medicine_research/modules/user/user_root_screen.dart';
+
 
 void main() async{
 
