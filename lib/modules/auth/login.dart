@@ -168,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'password': _passwordController.text.trim(),
           },
         );
+        print(response.body);
 
         var responseData = jsonDecode(response.body);
 
